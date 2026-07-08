@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The NGO Whisperer® - Global Fellowship Programme</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #0A2A5E;
+            --primary-light: #1a3a6e;
+            --primary-dark: #051a3e;
+            --text: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --text-muted: rgba(255,255,255,0.6);
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+            --accent: #ff6b6b;
+            --success: #4ecdc4;
+        }
+
+        * { 
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--primary);
+        }
+
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary);
+            color: var(--text);
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        .skip-to-content:focus {
+            top: 6px;
+        }
+
+        /* Header */
+        header {
+            background: var(--primary-dark);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            background: rgba(0,0,0,0.2);
+            padding: 8px 0;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--text);
+        }
+
+        nav {
+            background: var(--primary);
+            padding: 15px 0;
+        }
+
+        .nav-menu {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 0;
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="40" cy="80" r="1.5" fill="rgba(255,255,255,0.08)"/></svg>');
+            background-size: 200px 200px;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .content-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .objective-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .objective-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .objective-card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Faculty Section */
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .faculty-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .faculty-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .faculty-card h4 {
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .faculty-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Dates Section */
+        .dates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .date-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .date-card strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Map Section */
+        .map-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .map-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        #map { 
+            height: 500px; 
+            border-radius: 8px;
+            border: 2px solid var(--primary-light);
+            overflow: hidden;
+        }
+
+        .map-sidebar {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .map-controls {
+            margin-bottom: 20px;
+        }
+
+        .map-controls h4 {
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn { 
+            background: var(--text);
+            color: var(--primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { 
+            background: rgba(255,255,255,0.9); 
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        .map-stats {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .fellows-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .fellow-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fellow-item:hover {
+            transform: translateX(5px);
+            border-color: var(--accent);
+        }
+
+        .fellow-item h5 {
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .fellow-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .fellow-country {
+            background: var(--primary-light);
+            color: var(--text);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-menu {
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .content-section {
+                padding: 30px 20px;
+            }
+
+            .map-container {
+                grid-template-columns: 1fr;
+            }
+
+            .map-sidebar {
+                max-height: 400px;
+            }
+
+            .objectives-grid,
+            .faculty-grid,
+            .dates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body id="top">
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+    <header>
+        <!-- Header top removed to eliminate duplicates -->
+        <nav>
+            <div class="nav-menu">
+                <a href="#home">Home</a>
+                <a href="#what-we-do">What We Do</a>
+                <a href="#experience">Experience</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#contact">Contact Us</a>
+                <a href="#fellowship" class="active">Fellowship</a>
+                <a href="#masterclass">Masterclass</a>
+                <a href="#summit">Summit</a>
+                <a href="#books">Books</a>
+                <a href="#magazine">Magazine</a>
+                <a href="#account">Account</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The NGO Whisperer®</h1>
+            <h2>Global Fellowship Programme 2026</h2>
+            <p>An accredited seven-month rigorous virtual leadership programme for exceptional leaders and founders of non-governmental organisations (NGOs) and social enterprises worldwide.</p>
+        </div>
+    </section>
+
+    <main id="main-content">
+        <section class="content-section" id="objectives">
+            <h2 class="section-title">Objectives of Global Fellowship Programme</h2>
+            <p>The NGO Whisperer® Global Fellowship Programme is designed to build capacity and create a global community of leaders focused on high-impact programmes.</p>
+            
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <h3>Build Capacity</h3>
+                    <p>To build capacity of professionals from small and medium-sized NGOs and Social Enterprises who are already in positions of leadership and influence to further enhance and expand their knowledge, skills, and expertise.</p>
+                </div>
+                <div class="objective-card">
+                    <h3>Provide Training</h3>
+                    <p>To provide high-impact training, professional development, and cross-cultural opportunities for NGOs and Social Enterprises across the globe especially in low- and middle-income countries.</p>
+                </div>
+                <div class="objective-card">
+                    <h3>Create Community</h3>
+                    <p>To create a global community of leaders, influencers, and decision-makers, who are focused on designing and implementing high-impact programmes that contribute to building a sustainable world.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="faculty">
+            <h2 class="section-title">Faculty Members</h2>
+            <div class="faculty-grid">
+                <div class="faculty-card">
+                    <div class="faculty-avatar">CA</div>
+                    <h4>Carolyne A. Opinde Dr.h.c.</h4>
+                    <p>Founder and Convenor</p>
+                </div>
+                <div class="faculty-card">
+                    <div class="faculty-avatar">BD</div>
+                    <h4>Barry Davis</h4>
+                    <p>Leadership Development Instructor</p>
+                </div>
+                <div class="faculty-card">
+                    <div class="faculty-avatar">FC</div>
+                    <h4>Florence Chikowore</h4>
+                    <p>Human Change Management Instructor</p>
+                </div>
+                <div class="faculty-card">
+                    <div class="faculty-avatar">CW</div>
+                    <h4>Charles Warria</h4>
+                    <p>Monitoring, Evaluation and Learning Instructor</p>
+                </div>
+                <div class="faculty-card">
+                    <div class="faculty-avatar">SP</div>
+                    <h4>Sheryl Puterman</h4>
+                    <p>Health and Wellness Instructor</p>
+                </div>
+                <div class="faculty-card">
+                    <div class="faculty-avatar">SP</div>
+                    <h4>Steve Puterman</h4>
+                    <p>Health and Wellness Instructor</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="dates">
+            <h2 class="section-title">Important Dates</h2>
+            <p>This is a seven-month rigorous online programme from March to September 2026.</p>
+            
+            <div class="dates-grid">
+                <div class="date-card">
+                    <strong>Application Opens</strong>
+                    05 November 2025
+                </div>
+                <div class="date-card">
+                    <strong>Application Closes</strong>
+                    16 January 2026
+                </div>
+                <div class="date-card">
+                    <strong>Recruitment</strong>
+                    19 – 31 January 2026
+                </div>
+                <div class="date-card">
+                    <strong>Orientation Ceremony</strong>
+                    28 February 2026
+                </div>
+                <div class="date-card">
+                    <strong>Fellowship Programme Starts</strong>
+                    01 March 2026
+                </div>
+                <div class="date-card">
+                    <strong>Fellowship Programme Ends</strong>
+                    30 September 2026
+                </div>
+                <div class="date-card">
+                    <strong>Graduation Ceremony</strong>
+                    25 November 2026
+                </div>
+                <div class="date-card">
+                    <strong>What To Expect</strong>
+                    One-on-one mentorship, masterclasses, summit access, community network, magazine features
+                </div>
+            </div>
+        </section>
+
+        <section class="map-section" id="fellowship-map">
+            <h2 class="section-title">Interactive Fellowship Map</h2>
+            <p>Explore our global network of fellows across Africa, Asia, and beyond. Click on countries or use filters to explore by region.</p>
+            
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-sidebar">
+                    <div class="map-controls">
+                        <h4>Filter by Region</h4>
+                        <div class="filter-buttons">
+                            <button class="btn active" onclick="showAllFellows()">All Fellows</button>
+                            <button class="btn" onclick="filterByRegion('africa')">Africa</button>
+                            <button class="btn" onclick="filterByRegion('asia')">Asia</button>
+                            <button class="btn" onclick="filterByRegion('americas')">Americas</button>
+                            <button class="btn" onclick="filterByRegion('europe')">Europe</button>
+                        </div>
+                    </div>
+                    
+                    <div class="map-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Fellows</span>
+                            <span class="stat-value" id="total-fellows">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Countries</span>
+                            <span class="stat-value" id="total-countries">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cohorts</span>
+                            <span class="stat-value" id="total-cohorts">0</span>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin-top: 20px;">Fellows Directory</h4>
+                    <div class="fellows-list" id="fellows-list">
+                        <p style="text-align: center; color: var(--text-secondary);">Loading fellows...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="2026-fellows">
+            <h2 class="section-title">2026 Fellows</h2>
+            <div class="fellows-grid" id="fellows-grid">
+                <!-- Fellows will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#what-we-do">What We Do</a>
+                <a href="#experience">Experience</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#contact">Contact Us</a>
+                <a href="#fellowship">Fellowship</a>
+                <a href="#masterclass">Masterclass</a>
+                <a href="#summit">Summit</a>
+                <a href="#books">Books</a>
+                <a href="#magazine">Magazine</a>
+                <a href="#account">Account</a>
+            </div>
+            <div class="copyright">
+                © 2026 | The NGO Whisperer® Centre For Social Impact LTD. | info@ngowhisperer.com | Reg. Company No. 14330696 | Jactin House, 24 Hood Street, Manchester, M4 6WX, United Kingdom
+            </div>
+            <a href="#top" class="btn" style="margin-top: 20px;">Go to Top</a>
+        </div>
+    </footer>
+
+    <script>
+        // FELLOWS DATA - Sample from 2021-2026
+        const fellowsData = [
+            // 2026 Fellows
+            {id: 1, name: "Rev. Adenike C. Olumide-Emmanuel", country: "Nigeria", country_code: "NG", city: "Lagos", lat: 6.5244, lng: 3.3792, cohort: "2026", bio: "Founder and President, Opolo ati Ewa Women Empowerment Initiative", region: "africa"},
+            {id: 2, name: "Aline Hitiyaremye Umubyeyi", country: "Rwanda", country_code: "RW", city: "Kigali", lat: -1.9403, lng: 30.1304, cohort: "2026", bio: "Chief Executive Officer, Partners For Conservation", region: "africa"},
+            {id: 3, name: "Chinedu George Nnawetanma", country: "Nigeria", country_code: "NG", city: "Abuja", lat: 9.0579, lng: 7.4951, cohort: "2026", bio: "Fiscal Sponsorship Program Manager, Financing Alliance for Health", region: "africa"},
+            {id: 4, name: "Christian Fru Ngang", country: "Cameroon", country_code: "CM", city: "Bamenda", lat: 3.8480, lng: 13.2314, cohort: "2026", bio: "Founder and CEO, Research and Development Without Borders", region: "africa"},
+            {id: 5, name: "James Kipsang Cheruiyot", country: "Kenya", country_code: "KE", city: "Nakuru", lat: -0.3031, lng: 36.9692, cohort: "2026", bio: "Resource Mobilization Manager, Kakenya's Dream", region: "africa"},
+            {id: 6, name: "Hasan Al Banna", country: "India", country_code: "IN", city: "New Delhi", lat: 28.7041, lng: 77.1025, cohort: "2026", bio: "Founder, Association for Parivartan of Nation", region: "asia"},
+            {id: 7, name: "Janat Namukose", country: "Uganda", country_code: "UG", city: "Kampala", lat: 0.3476, lng: 32.5825, cohort: "2026", bio: "Associate Head People and Culture, STiR Education", region: "africa"},
+            
+            // 2025 Fellows
+            {id: 8, name: "Dr. Caroline W. Njoroge", country: "Kenya", country_code: "KE", city: "Eldoret", lat: 0.5143, lng: 35.2694, cohort: "2025", bio: "Program Director, The Pastoral Women's Council", region: "africa"},
+            {id: 9, name: "Blessing Akinlosotu", country: "Nigeria", country_code: "NG", city: "Lagos", lat: 6.5244, lng: 3.3792, cohort: "2025", bio: "Founder, Blessing Akinlosotu Foundation", region: "africa"},
+            
+            // 2024 Fellows
+            {id: 10, name: "Prof. Judith Kuoh Anchang-Kimbi", country: "Cameroon", country_code: "CM", city: "Bamenda", lat: 3.8480, lng: 13.2314, cohort: "2024", bio: "Founder, TRACH", region: "africa"},
+            {id: 11, name: "L. Arya Chandran", country: "India", country_code: "IN", city: "Kochi", lat: 9.9312, lng: 76.2673, cohort: "2024", bio: "Chief Operating Officer, Bharata Mata Extension for Organic Research and Environment", region: "asia"},
+            {id: 12, name: "Mariam Kabamba Merry", country: "DRC", country_code: "CD", city: "Kinshasa", lat: -4.4419, lng: 15.2663, cohort: "2024", bio: "National Coordinator, Congo Environnement et Nature", region: "africa"},
+            
+            // 2023 Fellows
+            {id: 13, name: "Mariya Shmelova", country: "Poland", country_code: "PL", city: "Warsaw", lat: 52.2297, lng: 21.0122, cohort: "2023", bio: "Chairperson, To Proste Foundation", region: "europe"},
+            {id: 14, name: "Midhun S Noble", country: "India", country_code: "IN", city: "Bangalore", lat: 12.9716, lng: 77.5946, cohort: "2023", bio: "Chairperson, New Education Group - Foundation for Innovation and Research in Education", region: "asia"},
+            
+            // 2022 Fellows
+            {id: 15, name: "Catherine Kakolo Mongella", country: "Tanzania", country_code: "TZ", city: "Dar es Salaam", lat: -6.7924, lng: 39.2083, cohort: "2022", bio: "Founder & Executive Director, Action for Women Organization", region: "africa"},
+            {id: 16, name: "Chinelo Bridget Enukora", country: "Nigeria", country_code: "NG", city: "Lagos", lat: 6.5244, lng: 3.3792, cohort: "2022", bio: "Executive Director, Unstoppable Builders Initiative", region: "africa"},
+            
+            // 2021 Fellows
+            {id: 17, name: "Dr. Bukirwa Irene Kamara", country: "South Africa", country_code: "ZA", city: "Johannesburg", lat: -26.2041, lng: 28.0473, cohort: "2021", bio: "Founder and CEO, Young Global Entrepreneurs", region: "africa"},
+            {id: 18, name: "Edwin Gitau Kibe", country: "Kenya", country_code: "KE", city: "Nairobi", lat: -1.2921, lng: 36.8219, cohort: "2021", bio: "Programme Director, United by Health and Agriculture Improvement", region: "africa"}
+        ];
+
+        let map, markers = [], countriesLayer;
+        let allFellows = [], currentFellows = [];
+
+        // UTILITY FUNCTIONS
+        function getFellowImage(id, name) {
+            return `https://picsum.photos/seed/fellow${id}-${name.replace(/\s+/g, '-').toLowerCase()}/80/80.jpg`;
+        }
+
+        function getRegion(countryCode) {
+            const regionMap = {
+                'africa': ['NG', 'KE', 'UG', 'ZA', 'RW', 'CM', 'CD', 'TZ', 'MW', 'GH', 'LR', 'ET', 'NE', 'SZ', 'SL', 'BW', 'LS', 'SO', 'TG', 'BF', 'CI', 'DJ', 'EG', 'GM', 'GN', 'GW', 'LY', 'MA', 'MR', 'MU', 'MZ', 'NA', 'RW', 'SC', 'SD', 'SL', 'SN', 'SO', 'SS', 'SZ', 'TD', 'TG', 'TN', 'TZ', 'UG', 'ZA', 'ZM', 'ZW'],
+                'asia': ['IN', 'PK', 'PH', 'NP', 'BD', 'CN', 'JP', 'KR', 'TH', 'VN', 'ID', 'MY', 'SG', 'LK', 'MM', 'KH', 'LA', 'BT', 'MV', 'AF'],
+                'americas': ['CA', 'US', 'MX', 'GT', 'CR', 'PA', 'HN', 'SV', 'NI', 'BZ', 'BR', 'AR', 'CL', 'CO', 'PE', 'VE', 'EC', 'BO', 'PY', 'UY', 'GY', 'SR', 'GF'],
+                'europe': ['PL', 'GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'SE', 'NO', 'DK', 'FI', 'IE', 'PT', 'GR', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SI', 'EE', 'LV', 'LT', 'LU', 'MT', 'CY']
+            };
+            
+            for (const [region, countries] of Object.entries(regionMap)) {
+                if (countries.includes(countryCode)) {
+                    return region;
+                }
+            }
+            return 'other';
+        }
+
+        // MAP INITIALIZATION
+        async function initMap() {
+            try {
+                console.log('Initializing map...');
+                
+                // Wait for DOM to be ready
+                if (document.readyState === 'loading') {
+                    await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+                }
+                
+                const mapContainer = document.getElementById('map');
+                if (!mapContainer) {
+                    console.error('Map container not found');
+                    return;
+                }
+                
+                // Ensure container has dimensions
+                if (mapContainer.offsetWidth === 0 || mapContainer.offsetHeight === 0) {
+                    console.log('Map container has no dimensions, waiting...');
+                    setTimeout(() => initMap(), 100);
+                    return;
+                }
+                
+                map = L.map('map', {
+                    worldCopyJump: false,
+                    maxBounds: [[-90, -180], [90, 180]],
+                    maxBoundsViscosity: 1.0
+                }).setView([10, 0], 2);
+                console.log('Map created:', map);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap',
+                    noWrap: true
+                }).addTo(map);
+                console.log('Tiles added');
+
+                // Load countries
+                try {
+                    const response = await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+                    const geoData = await response.json();
+                    
+                    countriesLayer = L.geoJSON(geoData, {
+                        style: {
+                            fillColor: '#ffffff',
+                            weight: 1,
+                            opacity: 0.3,
+                            color: '#ffffff',
+                            fillOpacity: 0.1
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.on({
+                                click: function() {
+                                    const code = feature.id;
+                                    filterByCountry(code);
+                                },
+                                mouseover: function() {
+                                    this.setStyle({
+                                        fillColor: 'rgba(255, 255, 255, 0.2)',
+                                        weight: 2
+                                    });
+                                },
+                                mouseout: function() {
+                                    this.setStyle({
+                                        fillColor: 'rgba(255, 255, 255, 0.1)',
+                                        weight: 1
+                                    });
+                                }
+                            });
+                        }
+                    }).addTo(map);
+                    console.log('Countries loaded');
+                } catch (geoError) {
+                    console.warn('Could not load countries:', geoError);
+                }
+
+                // Load fellows
+                allFellows = fellowsData;
+                currentFellows = allFellows;
+                console.log('Fellows loaded:', allFellows.length);
+                
+                displayFellows(currentFellows);
+                updateStats();
+                displayFellowsGrid();
+                
+                console.log('Map initialization complete');
+                
+            } catch (error) {
+                console.error('Error initializing map:', error);
+            }
+        }
+
+        // FELLOW DISPLAY FUNCTIONS
+        function displayFellows(fellows) {
+            // Clear existing markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            // Add new markers
+            fellows.forEach(fellow => {
+                if (fellow.lat && fellow.lng) {
+                    const marker = L.marker([fellow.lat, fellow.lng]);
+                    
+                    const popupContent = `
+                        <div style="background: white; color: #333; padding: 15px; border-radius: 8px; max-width: 250px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <img src="${getFellowImage(fellow.id, fellow.name)}" alt="${fellow.name}" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 10px;">
+                                <div>
+                                    <h5 style="margin: 0; color: #0A2A5E; font-weight: 600;">${fellow.name}</h5>
+                                    <span style="background: #0A2A5E; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${fellow.cohort}</span>
+                                </div>
+                            </div>
+                            <p style="margin: 5px 0; color: #333;"><strong>Location:</strong> ${fellow.city}, ${fellow.country}</p>
+                            <p style="margin: 5px 0; color: #666; font-size: 14px;"><em>${fellow.bio}</em></p>
+                        </div>
+                    `;
+                    
+                    marker.bindPopup(popupContent);
+                    marker.addTo(map);
+                    markers.push(marker);
+                }
+            });
+            
+            // Update sidebar list
+            updateFellowsList(fellows);
+        }
+
+        function updateFellowsList(fellows) {
+            const list = document.getElementById('fellows-list');
+            if (fellows.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No fellows found for this region.</p>';
+                return;
+            }
+            
+            list.innerHTML = fellows.slice(0, 10).map(fellow => `
+                <div class="fellow-item" onclick="focusOnFellow(${fellow.lat}, ${fellow.lng})">
+                    <h5>${fellow.name}</h5>
+                    <p>${fellow.bio.substring(0, 60)}...</p>
+                    <span class="fellow-country">${fellow.country}</span>
+                </div>
+            `).join('');
+        }
+
+        function displayFellowsGrid() {
+            const grid = document.getElementById('fellows-grid');
+            const cohorts = {};
+            
+            // Group by cohort
+            allFellows.forEach(fellow => {
+                if (!cohorts[fellow.cohort]) {
+                    cohorts[fellow.cohort] = [];
+                }
+                cohorts[fellow.cohort].push(fellow);
+            });
+            
+            // Display by cohort
+            let html = '';
+            Object.keys(cohorts).sort((a, b) => b - a).forEach(cohort => {
+                html += `
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="color: var(--accent); margin-bottom: 20px;">${cohort} Fellows (${cohorts[cohort].length})</h3>
+                        <div class="faculty-grid">
+                            ${cohorts[cohort].map(fellow => `
+                                <div class="faculty-card">
+                                    <img src="${getFellowImage(fellow.id, fellow.name)}" alt="${fellow.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px;">
+                                    <h4>${fellow.name}</h4>
+                                    <p style="color: var(--text-secondary); margin-bottom: 5px;">${fellow.city}, ${fellow.country}</p>
+                                    <p style="font-size: 14px;">${fellow.bio.substring(0, 80)}...</p>
+                                    <span class="fellow-country">${fellow.cohort}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+
+        // STATISTICS
+        function updateStats() {
+            const countries = new Set(currentFellows.map(f => f.country));
+            const cohorts = new Set(currentFellows.map(f => f.cohort));
+            
+            document.getElementById('total-fellows').textContent = currentFellows.length;
+            document.getElementById('total-countries').textContent = countries.size;
+            document.getElementById('total-cohorts').textContent = cohorts.size;
+        }
+
+        // FILTERING FUNCTIONS
+        function filterByRegion(region) {
+            currentFellows = allFellows.filter(fellow => fellow.region === region);
+            displayFellows(currentFellows);
+            updateStats();
+            
+            // Update active button
+            document.querySelectorAll('.filter-buttons .btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function filterByCountry(countryCode) {
+            currentFellows = allFellows.filter(fellow => fellow.country_code === countryCode);
+            displayFellows(currentFellows);
+            updateStats();
+        }
+
+        function showAllFellows() {
+            currentFellows = allFellows;
+            displayFellows(currentFellows);
+            updateStats();
+            
+            // Update active button
+            document.querySelectorAll('.filter-buttons .btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function focusOnFellow(lat, lng) {
+            map.setView([lat, lng], 5);
+        }
+
+        // INITIALIZATION
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            initMap();
+        }
+    </script>
+</body>
+</html>

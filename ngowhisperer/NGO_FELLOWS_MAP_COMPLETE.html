@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Fellowship Map - Complete Implementation</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #0A2A5E;
+            --primary-light: #1a3a6e;
+            --text: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: var(--primary);
+            color: var(--text);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        .status { 
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .controls { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap;
+        }
+
+        .btn { 
+            background: var(--text);
+            color: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { 
+            background: rgba(255,255,255,0.9); 
+            transform: translateY(-2px);
+        }
+
+        .stats { 
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-top: 15px;
+        }
+
+        .stat-card { 
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number { font-size: 24px; font-weight: bold; color: var(--text); }
+        .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 5px; }
+
+        #map { 
+            height: 500px; 
+            border-radius: 8px;
+            border: 2px solid var(--primary-light);
+            margin-bottom: 20px;
+        }
+
+        .fellows { 
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .fellow-card { 
+            display: flex; 
+            gap: 15px; 
+            padding: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .fellow-avatar { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            flex-shrink: 0;
+        }
+
+        .fellow-info { flex: 1; }
+        .fellow-info h5 { margin: 0 0 5px 0; }
+        .fellow-info p { margin: 0 0 5px 0; color: var(--text-secondary); }
+
+        .year-badge { 
+            background: rgba(255,255,255,0.2);
+            color: var(--text);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .controls { justify-content: stretch; }
+            .btn { flex: 1; min-width: 120px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .fellow-card { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NGO Fellowship Map</h1>
+            <p>Interactive map showing NGO fellows across Africa, Asia, and beyond. Click countries to filter.</p>
+        </div>
+
+        <div class="status">
+            <div id="status">Loading fellows...</div>
+            <div style="margin-top: 10px;">
+                <span class="stat-number" id="total-fellows">0</span> Fellows • 
+                <span class="stat-number" id="total-countries">0</span> Countries
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="showAllFellows()">Show All Fellows</button>
+            <button class="btn" onclick="filterByCountry('KE')">Kenya</button>
+            <button class="btn" onclick="filterByCountry('NG')">Nigeria</button>
+            <button class="btn" onclick="filterByCountry('UG')">Uganda</button>
+            <button class="btn" onclick="filterByCountry('ZA')">South Africa</button>
+            <button class="btn" onclick="filterByCountry('IN')">India</button>
+        </div>
+
+        <div class="stats">
+            <h3>Fellowship Statistics</h3>
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total">0</div>
+                    <div class="stat-label">Total Fellows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-countries">0</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-kenya">0</div>
+                    <div class="stat-label">Kenya</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-nigeria">0</div>
+                    <div class="stat-label">Nigeria</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="fellows">
+            <h3>Fellows Directory (<span id="fellow-count">0</span>)</h3>
+            <div id="fellows-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let map, markers = [], countriesLayer;
+        let allFellows = [], currentFellows = [];
+
+        // HARDCODED FELLOWS DATA
+        const fellowsData = [
+            {
+                id: 1,
+                name: "Rev. Adenike C. Olumide-Emmanuel",
+                bio: "Founder and President, Opolo ati Ewa Women Empowerment Initiative",
+                country: "Nigeria",
+                country_code: "NG",
+                city: "Lagos",
+                lat: 6.5244,
+                lng: 3.3792,
+                cohort: "2026"
+            },
+            {
+                id: 2,
+                name: "Dr. Amina J. Mohammed",
+                bio: "Executive Director, Women's Rights Advancement and Protection Alternative",
+                country: "Kenya",
+                country_code: "KE",
+                city: "Nairobi",
+                lat: -1.2921,
+                lng: 36.8219,
+                cohort: "2026"
+            },
+            {
+                id: 3,
+                name: "James Kipsang Cheruiyot",
+                bio: "Resource Mobilization Manager, Kakenya's Dream",
+                country: "Kenya",
+                country_code: "KE",
+                city: "Nakuru",
+                lat: -0.3031,
+                lng: 36.9692,
+                cohort: "2026"
+            },
+            {
+                id: 4,
+                name: "Hasan Al Banna",
+                bio: "Founder, Association for Parivartan of Nation",
+                country: "India",
+                country_code: "IN",
+                city: "New Delhi",
+                lat: 28.7041,
+                lng: 77.1025,
+                cohort: "2026"
+            },
+            {
+                id: 5,
+                name: "Janat Namukose",
+                bio: "Associate Head People and Culture, STiR Education",
+                country: "Uganda",
+                country_code: "UG",
+                city: "Kampala",
+                lat: 0.3476,
+                lng: 32.5825,
+                cohort: "2026"
+            },
+            {
+                id: 6,
+                name: "Aline Hitiyaremye Umubyeyi",
+                bio: "Chief Executive Officer, Partners For Conservation",
+                country: "Rwanda",
+                country_code: "RW",
+                city: "Kigali",
+                lat: -1.9403,
+                lng: 30.1304,
+                cohort: "2026"
+            },
+            {
+                id: 7,
+                name: "Dr. Caroline W. Njoroge",
+                bio: "Program Director, The Pastoral Women's Council",
+                country: "Kenya",
+                country_code: "KE",
+                city: "Eldoret",
+                lat: 0.5143,
+                lng: 35.2694,
+                cohort: "2025"
+            },
+            {
+                id: 8,
+                name: "Blessing Akinlosotu",
+                bio: "Founder, Blessing Akinlosotu Foundation",
+                country: "Nigeria",
+                country_code: "NG",
+                city: "Abuja",
+                lat: 9.0579,
+                lng: 7.4951,
+                cohort: "2025"
+            },
+            {
+                id: 9,
+                name: "Prof. Judith Kuoh Anchang-Kimbi",
+                bio: "Founder, TRACH",
+                country: "Cameroon",
+                country_code: "CM",
+                city: "Bamenda",
+                lat: 3.8480,
+                lng: 13.2314,
+                cohort: "2024"
+            },
+            {
+                id: 10,
+                name: "L. Arya Chandran",
+                bio: "Chief Operating Officer, Bharata Mata Extension for Organic Research and Environment",
+                country: "India",
+                country_code: "IN",
+                city: "Kochi",
+                lat: 9.9312,
+                lng: 76.2673,
+                cohort: "2024"
+            },
+            {
+                id: 11,
+                name: "Mariam Kabamba Merry",
+                bio: "National Coordinator, Congo Environnement et Nature",
+                country: "DRC",
+                country_code: "CD",
+                city: "Kinshasa",
+                lat: -4.4419,
+                lng: 15.2663,
+                cohort: "2023"
+            }
+        ];
+
+        // UTILITY FUNCTIONS
+        function getFellowImage(id, name) {
+            return `https://picsum.photos/seed/fellow${id}-${name.replace(/\s+/g, '-').toLowerCase()}/60/60.jpg`;
+        }
+
+        // DATA FETCHING (with API support)
+        async function loadFellows() {
+            try {
+                // Replace this with your actual API endpoint
+                const response = await fetch('https://example.com/fellows.json');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                // Fallback to hardcoded data
+                return fellowsData;
+            }
+        }
+
+        // MAP INITIALIZATION
+        async function initMap() {
+            try {
+                console.log('Initializing map...');
+                
+                const mapContainer = document.getElementById('map');
+                if (!mapContainer) {
+                    console.error('Map container not found');
+                    return;
+                }
+                
+                map = L.map('map', {
+                    worldCopyJump: false,
+                    maxBounds: [[-90, -180], [90, 180]],
+                    maxBoundsViscosity: 1.0
+                }).setView([10, 0], 2);
+                console.log('Map created:', map);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap',
+                    noWrap: true
+                }).addTo(map);
+                console.log('Tiles added');
+
+                // Load countries
+                try {
+                    const response = await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+                    const geoData = await response.json();
+                    
+                    countriesLayer = L.geoJSON(geoData, {
+                        style: {
+                            fillColor: '#ffffff',
+                            weight: 1,
+                            opacity: 0.3,
+                            color: '#ffffff',
+                            fillOpacity: 0.1
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.on({
+                                click: function() {
+                                    const code = feature.id;
+                                    filterByCountry(code);
+                                }
+                            });
+                        }
+                    }).addTo(map);
+                    console.log('Countries loaded');
+                } catch (geoError) {
+                    console.warn('Could not load countries:', geoError);
+                }
+
+                // Load fellows
+                allFellows = await loadFellows();
+                currentFellows = allFellows;
+                console.log('Fellows loaded:', allFellows.length);
+                
+                displayFellows(currentFellows);
+                updateStats();
+                
+                document.getElementById('status').textContent = `✅ Ready - ${allFellows.length} fellows loaded`;
+                console.log('Map initialization complete');
+                
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('status').textContent = '❌ Error initializing map';
+            }
+        }
+
+        // FELLOW DISPLAY
+        function displayFellows(fellows) {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            const list = document.getElementById('fellows-list');
+            list.innerHTML = '';
+            
+            fellows.forEach(fellow => {
+                if (fellow.lat && fellow.lng) {
+                    const marker = L.marker([fellow.lat, fellow.lng]);
+                    marker.bindPopup(`
+                        <div style="background: white; color: #333; padding: 10px; border-radius: 5px;">
+                            <h5>${fellow.name}</h5>
+                            <p><strong>Location:</strong> ${fellow.city}, ${fellow.country}</p>
+                            <p><strong>Cohort:</strong> ${fellow.cohort}</p>
+                            <p><em>${fellow.bio}</em></p>
+                        </div>
+                    `);
+                    marker.addTo(map);
+                    markers.push(marker);
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'fellow-card';
+                card.innerHTML = `
+                    <img src="${getFellowImage(fellow.id, fellow.name)}" alt="${fellow.name}" class="fellow-avatar">
+                    <div class="fellow-info">
+                        <h5>${fellow.name}</h5>
+                        <p><strong>Location:</strong> ${fellow.city}, ${fellow.country}</p>
+                        <p>${fellow.bio.substring(0, 100)}${fellow.bio.length > 100 ? '...' : ''}</p>
+                        <span class="year-badge">${fellow.cohort}</span>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            
+            document.getElementById('fellow-count').textContent = fellows.length;
+        }
+
+        // STATISTICS
+        function updateStats() {
+            const countries = {};
+            allFellows.forEach(fellow => {
+                countries[fellow.country] = (countries[fellow.country] || 0) + 1;
+            });
+            
+            document.getElementById('stat-total').textContent = allFellows.length;
+            document.getElementById('stat-countries').textContent = Object.keys(countries).length;
+            document.getElementById('stat-kenya').textContent = countries['Kenya'] || 0;
+            document.getElementById('stat-nigeria').textContent = countries['Nigeria'] || 0;
+        }
+
+        // FILTERING
+        function filterByCountry(code) {
+            currentFellows = allFellows.filter(f => f.country_code === code);
+            displayFellows(currentFellows);
+            document.getElementById('status').textContent = `Filtered by ${code}`;
+        }
+
+        function showAllFellows() {
+            currentFellows = allFellows;
+            displayFellows(currentFellows);
+            document.getElementById('status').textContent = 'Showing all fellows';
+        }
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>
