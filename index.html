@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spirit Embassy Kisumu - The Good News Church</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .gradient-gold { background: linear-gradient(135deg, #FBBF24, #F59E0B, #D97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(76,29,149,0.6) 50%, rgba(0,0,0,0.85) 100%); }
+    .glow-purple { box-shadow: 0 0 30px rgba(139, 92, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.15); }
+    .glow-gold { box-shadow: 0 0 25px rgba(251, 191, 36, 0.3), 0 0 50px rgba(251, 191, 36, 0.1); }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(139, 92, 246, 0.25); }
+    .text-glow { text-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.2); }
+    .nav-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(0, 0, 0, 0.75); }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    @keyframes pulse-glow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+    .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+    .btn-shine { position: relative; overflow: hidden; }
+    .btn-shine::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%); transition: all 0.6s; }
+    .btn-shine:hover::after { left: 100%; }
+    .section-divider { background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), rgba(251, 191, 36, 0.5), rgba(139, 92, 246, 0.5), transparent); height: 1px; }
+  </style>
+</head>
+<body class="bg-black text-white">
+
+  <!-- ===== STICKY NAVBAR ===== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 nav-glass border-b border-white/10 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <!-- Logo -->
+        <a href="#home" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-yellow-400 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">SE</div>
+          <span class="text-lg font-bold tracking-wider hidden sm:block">SPIRIT EMBASSY <span class="text-yellow-400">KISUMU</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="#home" class="text-sm font-medium text-white/80 hover:text-yellow-400 transition-colors">Home</a>
+          <a href="#about" class="text-sm font-medium text-white/80 hover:text-yellow-400 transition-colors">About</a>
+          <a href="#services" class="text-sm font-medium text-white/80 hover:text-yellow-400 transition-colors">Services</a>
+          <a href="#partner" class="text-sm font-medium text-white/80 hover:text-yellow-400 transition-colors">Partner</a>
+          <a href="#contact" class="text-sm font-medium text-white/80 hover:text-yellow-400 transition-colors">Contact</a>
+        </div>
+
+        <!-- Right Buttons -->
+        <div class="hidden lg:flex items-center gap-3">
+          <a href="#partner" class="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg shadow-orange-500/25 btn-shine">New Member</a>
+          <a href="#partner" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-full hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg shadow-purple-500/25 btn-shine">Give</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuBtn" class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+          <svg id="menuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg id="menuClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="lg:hidden hidden border-t border-white/10">
+      <div class="px-4 py-4 space-y-2">
+        <a href="#home" class="block px-4 py-3 text-white/80 hover:text-yellow-400 hover:bg-white/5 rounded-lg transition-all">Home</a>
+        <a href="#about" class="block px-4 py-3 text-white/80 hover:text-yellow-400 hover:bg-white/5 rounded-lg transition-all">About</a>
+        <a href="#services" class="block px-4 py-3 text-white/80 hover:text-yellow-400 hover:bg-white/5 rounded-lg transition-all">Services</a>
+        <a href="#partner" class="block px-4 py-3 text-white/80 hover:text-yellow-400 hover:bg-white/5 rounded-lg transition-all">Partner</a>
+        <a href="#contact" class="block px-4 py-3 text-white/80 hover:text-yellow-400 hover:bg-white/5 rounded-lg transition-all">Contact</a>
+        <div class="pt-2 flex gap-2">
+          <a href="#partner" class="flex-1 text-center px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full">New Member</a>
+          <a href="#partner" class="flex-1 text-center px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-full">Give</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Background -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-purple-950 via-black to-purple-950"></div>
+      <!-- Decorative light beams -->
+      <div class="absolute top-0 left-1/4 w-96 h-[600px] bg-purple-600/20 blur-[120px] rotate-12 animate-pulse-glow"></div>
+      <div class="absolute top-0 right-1/4 w-96 h-[600px] bg-purple-500/15 blur-[120px] -rotate-12 animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-yellow-500/10 blur-[150px] animate-pulse-glow" style="animation-delay: 0.75s;"></div>
+      <!-- Grid pattern overlay -->
+      <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
+    </div>
+    <div class="absolute inset-0 hero-overlay"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+      <!-- Cross Icon -->
+      <div class="mb-6 animate-float">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border-2 border-yellow-400/50 bg-yellow-400/10">
+          <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M11 2h2v7h7v2h-7v11h-2V11H4V9h7z"/></svg>
+        </div>
+      </div>
+
+      <p class="text-yellow-400 text-sm sm:text-base font-semibold tracking-[0.3em] uppercase mb-4">Welcome to</p>
+
+      <h1 class="font-display text-glow">
+        <span class="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-none tracking-tight">SPIRIT</span>
+        <span class="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-none tracking-tight">EMBASSY</span>
+        <span class="block text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black leading-none tracking-tight gradient-gold mt-2">KISUMU</span>
+      </h1>
+
+      <div class="mt-6 flex items-center justify-center gap-4">
+        <div class="h-px w-16 bg-gradient-to-r from-transparent to-yellow-400/50"></div>
+        <p class="text-lg sm:text-xl md:text-2xl font-light tracking-[0.2em] text-white/80">The Good News Church</p>
+        <div class="h-px w-16 bg-gradient-to-l from-transparent to-yellow-400/50"></div>
+      </div>
+
+      <p class="mt-6 text-white/60 text-base sm:text-lg max-w-2xl mx-auto">Experience the power of God, dynamic worship, and life-changing messages every Sunday.</p>
+
+      <!-- CTA Buttons -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#services" class="group relative px-8 py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold text-lg rounded-full hover:from-yellow-300 hover:to-yellow-400 transition-all shadow-2xl shadow-yellow-500/30 glow-gold btn-shine flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          JOIN US THIS SUNDAY
+        </a>
+        <a href="#" class="group px-8 py-4 border-2 border-purple-500/50 text-white font-bold text-lg rounded-full hover:bg-purple-600/20 hover:border-purple-400 transition-all backdrop-blur-sm flex items-center gap-3">
+          <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          WATCH LIVE
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- ===== WELCOME / ABOUT SECTION ===== -->
+  <section id="about" class="relative py-24 sm:py-32 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black via-purple-950/30 to-black"></div>
+    <!-- Decorative -->
+    <div class="absolute top-1/2 left-0 w-72 h-72 bg-purple-600/10 rounded-full blur-[100px]"></div>
+    <div class="absolute top-1/3 right-0 w-72 h-72 bg-yellow-500/5 rounded-full blur-[100px]"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Left: Text -->
+        <div>
+          <p class="text-yellow-400 text-sm font-semibold tracking-[0.25em] uppercase mb-3">Who We Are</p>
+          <h2 class="font-display text-4xl sm:text-5xl font-bold leading-tight mb-6">
+            Welcome to<br /><span class="gradient-gold">Spirit Embassy Kisumu</span>
+          </h2>
+          <div class="space-y-5 text-white/70 text-lg leading-relaxed">
+            <p>We are a vibrant community of believers, passionate about spreading the Good News of Jesus Christ in Kisumu and beyond. At Spirit Embassy, we believe in the transformative power of God's Word and the Holy Spirit.</p>
+            <p>Under the anointed leadership of our ministers, every service is a life-changing encounter with God's presence. Whether you are new to the faith or a seasoned believer, there is a place for you here.</p>
+            <p>Come experience dynamic worship, powerful teachings, and a community that genuinely cares about your spiritual growth and well-being.</p>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-6">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </div>
+              <div>
+                <p class="text-white font-bold text-xl">500+</p>
+                <p class="text-white/50 text-sm">Members</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+              </div>
+              <div>
+                <p class="text-white font-bold text-xl">10+</p>
+                <p class="text-white/50 text-sm">Years of Ministry</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Image Placeholder / Decorative -->
+        <div class="relative">
+          <div class="relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-purple-900/50 to-black border border-purple-500/20 glow-purple">
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-yellow-400 flex items-center justify-center mb-6">
+                <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M11 2h2v7h7v2h-7v11h-2V11H4V9h7z"/></svg>
+              </div>
+              <h3 class="font-display text-2xl font-bold text-white mb-2">Spirit Embassy</h3>
+              <p class="text-yellow-400 font-semibold tracking-widest text-sm">KISUMU</p>
+              <p class="text-white/50 mt-4 text-sm">The Good News Church</p>
+            </div>
+            <!-- Decorative corner accents -->
+            <div class="absolute top-4 left-4 w-12 h-12 border-l-2 border-t-2 border-yellow-400/40 rounded-tl-lg"></div>
+            <div class="absolute bottom-4 right-4 w-12 h-12 border-r-2 border-b-2 border-yellow-400/40 rounded-br-lg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- ===== SERVICE TIMES & LOCATION ===== -->
+  <section id="services" class="relative py-24 sm:py-32 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black via-purple-950/20 to-black"></div>
+    <div class="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <p class="text-yellow-400 text-sm font-semibold tracking-[0.25em] uppercase mb-3">Join Us</p>
+        <h2 class="font-display text-4xl sm:text-5xl font-bold">Service Times & <span class="gradient-gold">Location</span></h2>
+        <p class="mt-4 text-white/50 text-lg max-w-2xl mx-auto">We gather every week to worship, learn, and grow together. You are welcome to join any of our services.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-10">
+        <!-- Service Times -->
+        <div class="space-y-6">
+          <!-- Sunday Service -->
+          <div class="group p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-purple-950/50 border border-purple-500/20 card-hover">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-1">Sunday Worship Service</h3>
+                <p class="text-yellow-400 font-semibold text-lg">9:00 AM - 12:00 PM</p>
+                <p class="text-white/50 mt-2">Main service featuring praise and worship, the Word, and altar call.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Midweek Service -->
+          <div class="group p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-purple-950/50 border border-purple-500/20 card-hover">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-1">Midweek Bible Study</h3>
+                <p class="text-purple-400 font-semibold text-lg">Wednesday, 6:00 PM</p>
+                <p class="text-white/50 mt-2">Deeper study of the Word for spiritual growth and understanding.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prayer Service -->
+          <div class="group p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-900/30 to-purple-950/50 border border-purple-500/20 card-hover">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-1">Friday Night Prayer</h3>
+                <p class="text-blue-400 font-semibold text-lg">Friday, 7:00 PM</p>
+                <p class="text-white/50 mt-2">A night of intense prayer, intercession, and spiritual warfare.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Info -->
+          <div class="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-400/20">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 rounded-xl bg-yellow-400/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-7 h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-1">Our Location</h3>
+                <p class="text-yellow-400 font-semibold">Kisumu, Kenya</p>
+                <p class="text-white/50 mt-2">Along Oginga Odinga Street, Kisumu City</p>
+                <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-2 mt-3 text-yellow-400 hover:text-yellow-300 font-medium text-sm transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  Get Directions
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Maps Embed Placeholder -->
+        <div class="rounded-2xl overflow-hidden border border-purple-500/20 h-full min-h-[400px] lg:min-h-0">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127672.05895586673!2d34.6871766!3d-0.0917016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa37cb3e669b1%3A0xfaa9a0e0b1177f52!2sKisumu%2C%20Kenya!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+            width="100%"
+            height="100%"
+            style="border:0; min-height: 400px;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            class="grayscale hover:grayscale-0 transition-all duration-500"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- ===== CALL TO ACTION / PARTNER SECTION ===== -->
+  <section id="partner" class="relative py-24 sm:py-32 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black via-purple-950/30 to-black"></div>
+    <div class="absolute bottom-0 left-1/3 w-96 h-96 bg-yellow-500/8 rounded-full blur-[120px]"></div>
+    <div class="absolute top-1/4 right-0 w-72 h-72 bg-purple-600/10 rounded-full blur-[100px]"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <p class="text-yellow-400 text-sm font-semibold tracking-[0.25em] uppercase mb-3">Get Involved</p>
+        <h2 class="font-display text-4xl sm:text-5xl font-bold">Be Part of <span class="gradient-gold">Something Greater</span></h2>
+        <p class="mt-4 text-white/50 text-lg max-w-2xl mx-auto">There are many ways to connect, serve, and grow with Spirit Embassy Kisumu.</p>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card 1: New Member -->
+        <div class="group p-8 rounded-2xl bg-gradient-to-br from-orange-600/20 to-orange-700/10 border border-orange-500/20 card-hover text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/25">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">New Member</h3>
+          <p class="text-white/50 mb-6">Just joined or want to learn more? Register as a new member and begin your journey with us.</p>
+          <a href="#" class="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition-all text-sm btn-shine">Register Now</a>
+        </div>
+
+        <!-- Card 2: Partner with Us -->
+        <div class="group p-8 rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 border border-purple-500/20 card-hover text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/25">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Partner with Us</h3>
+          <p class="text-white/50 mb-6">Become a ministry partner and help us reach more souls for Christ across Kisumu and beyond.</p>
+          <a href="#" class="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-purple-700 transition-all text-sm btn-shine">Become a Partner</a>
+        </div>
+
+        <!-- Card 3: Give Offering -->
+        <div class="group p-8 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/20 card-hover text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-yellow-500/25">
+            <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Give Offering</h3>
+          <p class="text-white/50 mb-6">Sow a seed of faith. Your offering supports the ministry and outreach programs.</p>
+          <a href="#" class="inline-block px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-full hover:from-yellow-300 hover:to-yellow-400 transition-all text-sm btn-shine">Give Now</a>
+        </div>
+
+        <!-- Card 4: Pay Tithe -->
+        <div class="group p-8 rounded-2xl bg-gradient-to-br from-green-600/20 to-green-700/10 border border-green-500/20 card-hover text-center">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-green-500/25">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Pay Tithe</h3>
+          <p class="text-white/50 mb-6">Honor God with your tithe. Obedience to the Word opens the windows of heaven.</p>
+          <a href="#" class="inline-block px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all text-sm btn-shine">Pay Tithe</a>
+        </div>
+
+        <!-- Card 5: Download Bible -->
+        <div class="group p-8 rounded-2xl bg-gradient-to-br from-blue-600/20 to-blue-700/10 border border-blue-500/20 card-hover text-center sm:col-span-2 lg:col-span-2">
+          <div class="max-w-md mx-auto">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/25">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Download Bible</h3>
+            <p class="text-white/50 mb-6">Get the Word of God on your device. Download the Bible and study anytime, anywhere.</p>
+            <a href="#" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-blue-700 transition-all text-sm btn-shine">Download Free</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- ===== INSPIRATIONAL BANNER ===== -->
+  <section class="relative py-20 sm:py-28 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900"></div>
+    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 50%, rgba(251,191,36,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(139,92,246,0.3) 0%, transparent 50%);"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <svg class="w-10 h-10 text-yellow-400 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+      <blockquote class="font-display text-2xl sm:text-3xl md:text-4xl font-bold leading-relaxed text-white">
+        "For I know the plans I have for you," declares the Lord, "plans to prosper you and not to harm you, plans to give you hope and a future."
+      </blockquote>
+      <p class="mt-6 text-yellow-400 font-semibold text-lg tracking-wide">Jeremiah 29:11</p>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="contact" class="relative pt-20 pb-8 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black to-purple-950/30"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-purple-600/5 rounded-full blur-[100px]"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
+        <!-- Column 1: Brand -->
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-yellow-400 flex items-center justify-center font-bold text-sm">SE</div>
+            <span class="text-lg font-bold">SPIRIT EMBASSY</span>
+          </div>
+          <p class="text-white/50 text-sm leading-relaxed mb-6">The Good News Church. A vibrant community of believers passionate about Christ in Kisumu, Kenya.</p>
+          <!-- Social Icons -->
+          <div class="flex gap-3">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition-all group">
+              <svg class="w-5 h-5 text-white/60 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition-all group">
+              <svg class="w-5 h-5 text-white/60 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition-all group">
+              <svg class="w-5 h-5 text-white/60 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-red-600 flex items-center justify-center transition-all group">
+              <svg class="w-5 h-5 text-white/60 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Column 2: Quick Links -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-5">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Home</a></li>
+            <li><a href="#about" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">About Us</a></li>
+            <li><a href="#services" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Service Times</a></li>
+            <li><a href="#partner" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Partner</a></li>
+            <li><a href="#contact" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Services -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-5">Our Services</h4>
+          <ul class="space-y-3">
+            <li><a href="#services" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Sunday Worship</a></li>
+            <li><a href="#services" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Bible Study</a></li>
+            <li><a href="#services" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Prayer Night</a></li>
+            <li><a href="#partner" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">Give &amp; Tithe</a></li>
+            <li><a href="#partner" class="text-white/50 hover:text-yellow-400 transition-colors text-sm">New Members</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Contact -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-5">Contact Us</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <span class="text-white/50 text-sm">Oginga Odinga Street,<br />Kisumu, Kenya</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              <span class="text-white/50 text-sm">+254 700 000 000</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              <span class="text-white/50 text-sm">info@spiritembassykisumu.org</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-white/10 pt-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-white/40 text-sm">&copy; 2024 Spirit Embassy Kisumu. All rights reserved.</p>
+          <p class="text-white/30 text-xs">The Good News Church &mdash; Kisumu, Kenya</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // Tailwind Config
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            purple: {
+              950: '#1a0533',
+            },
+          },
+        },
+      },
+    };
+
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOpen = document.getElementById('menuOpen');
+    const menuClose = document.getElementById('menuClose');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      menuOpen.classList.toggle('hidden');
+      menuClose.classList.toggle('hidden');
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuOpen.classList.remove('hidden');
+        menuClose.classList.add('hidden');
+      });
+    });
+
+    // Navbar background on scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('shadow-2xl', 'shadow-purple-900/20');
+        navbar.style.borderBottomColor = 'rgba(139, 92, 246, 0.2)';
+      } else {
+        navbar.classList.remove('shadow-2xl', 'shadow-purple-900/20');
+        navbar.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
+      }
+    });
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-8');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('section > div > div').forEach(el => {
+      el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700');
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
